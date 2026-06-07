@@ -3,3 +3,6 @@ __pycache__/
 venv/
 .env
 .streamlit/
+
+generated_app/
+generated_app.zip
