@@ -12,7 +12,7 @@ def generate_project(schema):
 
     page_schema = (
         schema.get("ui_schema", {})
-              .get("pages", [])
+        .get("pages", [])
     )
 
     for page in page_schema:
@@ -129,10 +129,15 @@ export default function {page_name}() {{
         f.write(model_code)
 
     # =========================
-    # DYNAMIC ROUTES
+    # FASTAPI ROUTES
     # =========================
 
-    route_code = ""
+    route_code = """
+from fastapi import APIRouter
+
+router = APIRouter()
+
+"""
 
     if "api_schema" in schema:
 
@@ -162,12 +167,14 @@ export default function {page_name}() {{
             )
 
             route_code += f"""
+
+@router.{method}("{path}")
 def {function_name}():
     return {{
         "endpoint": "{path}",
-        "method": "{method.upper()}"
+        "method": "{method.upper()}",
+        "status": "success"
     }}
-
 """
 
     with open(
@@ -176,7 +183,44 @@ def {function_name}():
     ) as f:
         f.write(route_code)
 
+    # =========================
+    # REQUIREMENTS.TXT
+    # =========================
+
+    with open(
+        "generated_app/requirements.txt",
+        "w"
+    ) as f:
+
+        f.write(
+            """fastapi
+uvicorn
+"""
+        )
+
+    # =========================
+    # README.MD
+    # =========================
+
+    with open(
+        "generated_app/README.md",
+        "w"
+    ) as f:
+
+        f.write(
+            """# Generated Application
+
+This project was generated automatically by AI App Compiler.
+
+## Run Backend
+
+pip install -r requirements.txt
+
+uvicorn backend.routes:router --reload
+"""
+        )
+
     return {
-    "status": "success",
-    "folder": "generated_app"
-}
+        "status": "success",
+        "folder": "generated_app"
+    }
