@@ -1,23 +1,23 @@
 
-export default function Login() {
+export default function ContactManagement() {
     return (
         <div>
-            <h1>Login</h1>
+            <h1>Contact Management</h1>
 
 
             <div>
-                <label>username</label>
+                <label>contact_name</label>
                 <input
                     type="text"
-                    placeholder="username"
+                    placeholder="contact_name"
                 />
             </div>
 
             <div>
-                <label>password</label>
+                <label>contact_email</label>
                 <input
                     type="text"
-                    placeholder="password"
+                    placeholder="contact_email"
                 />
             </div>
 

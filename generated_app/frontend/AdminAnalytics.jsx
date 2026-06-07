@@ -1,8 +1,8 @@
 
-export default function Dashboard() {
+export default function AdminAnalytics() {
     return (
         <div>
-            <h1>Dashboard</h1>
+            <h1>Admin Analytics</h1>
 
 
 

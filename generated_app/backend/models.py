@@ -1,16 +1,24 @@
 
 class Users:
-    pass
+    id = None
+    username = None
+    password = None
+    role = None
 
 
 class Contacts:
-    pass
+    id = None
+    name = None
+    email = None
 
 
 class Login_Attempts:
-    pass
+    id = None
+    user_id = None
+    attempt_time = None
 
 
 class Admin_Analytics_Data:
-    pass
+    id = None
+    data = None
 
