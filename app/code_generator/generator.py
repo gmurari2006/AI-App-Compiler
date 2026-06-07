@@ -77,12 +77,17 @@ export default function {page_name}() {{
 
         with open(file_path, "w") as f:
             f.write(component_code)
-
     # =========================
-    # DYNAMIC MODELS
+    # SQLALCHEMY MODELS
     # =========================
 
-    model_code = ""
+    model_code = """
+from sqlalchemy import Column, String
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+"""
 
     if "db_schema" in schema:
 
@@ -95,9 +100,15 @@ export default function {page_name}() {{
 
             class_name = table["name"].title()
 
-            model_code += (
-                f"\nclass {class_name}:\n"
-            )
+            table_name = table["name"].lower()
+
+            model_code += f"""
+
+class {class_name}(Base):
+
+    __tablename__ = "{table_name}"
+
+"""
 
             columns = table.get(
                 "columns",
@@ -107,25 +118,36 @@ export default function {page_name}() {{
             if len(columns) == 0:
 
                 model_code += (
-                    "    pass\n\n"
+                    "    pass\n"
                 )
 
             else:
+
+                first_column = True
 
                 for column in columns:
 
                     field_name = column["name"]
 
-                    model_code += (
-                        f"    {field_name} = None\n"
-                    )
+                    if first_column:
 
-                model_code += "\n"
+                        model_code += (
+                            f'    {field_name} = Column(String, primary_key=True)\n'
+                        )
+
+                        first_column = False
+
+                    else:
+
+                        model_code += (
+                            f'    {field_name} = Column(String)\n'
+                        )
 
     with open(
         "generated_app/backend/models.py",
         "w"
     ) as f:
+
         f.write(model_code)
 
     # =========================
@@ -184,6 +206,70 @@ def {function_name}():
         f.write(route_code)
 
     # =========================
+    # MAIN.PY
+    # =========================
+
+    main_code = '''
+from fastapi import FastAPI
+from routes import router
+
+app = FastAPI(
+    title="Generated API"
+)
+
+app.include_router(router)
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "Generated API Running"
+    }
+'''
+
+    with open(
+        "generated_app/backend/main.py",
+        "w"
+    ) as f:
+        f.write(main_code)
+
+    # =========================
+    # DATABASE.PY
+    # =========================
+
+    database_code = '''
+DATABASE_URL = "sqlite:///app.db"
+
+
+def get_database_url():
+    return DATABASE_URL
+'''
+
+    with open(
+        "generated_app/backend/database.py",
+        "w"
+    ) as f:
+        f.write(database_code)
+
+       # =========================
+    # BACKEND REQUIREMENTS
+    # =========================
+
+    backend_requirements = """
+fastapi
+uvicorn
+sqlalchemy
+"""
+
+    with open(
+        "generated_app/backend/requirements.txt",
+        "w"
+    ) as f:
+        f.write(
+            backend_requirements.strip()
+        )
+        
+    # =========================
     # REQUIREMENTS.TXT
     # =========================
 
@@ -214,9 +300,11 @@ This project was generated automatically by AI App Compiler.
 
 ## Run Backend
 
+cd backend
+
 pip install -r requirements.txt
 
-uvicorn backend.routes:router --reload
+uvicorn main:app --reload
 """
         )
 
