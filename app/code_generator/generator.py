@@ -32,19 +32,28 @@ export default function Dashboard() {
         )
 
     # Backend files
+    entities = []
+
+    if "db_schema" in schema:
+        tables = schema["db_schema"].get("tables", [])
+
+        for table in tables:
+            entities.append(table["name"].title())
+
+    model_code = ""
+
+    for entity in entities:
+        model_code += f"""
+class {entity}:
+    pass
+
+"""
+
     with open(
         "generated_app/backend/models.py",
         "w"
     ) as f:
-        f.write(
-            """
-class User:
-    pass
-
-class Contact:
-    pass
-"""
-        )
+        f.write(model_code)
 
     with open(
         "generated_app/backend/routes.py",
