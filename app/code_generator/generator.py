@@ -233,18 +233,38 @@ def root():
     ) as f:
         f.write(main_code)
 
-    # =========================
+        # =========================
     # DATABASE.PY
     # =========================
 
     database_code = '''
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
 DATABASE_URL = "sqlite:///app.db"
 
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False}
+)
 
-def get_database_url():
-    return DATABASE_URL
+SessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=engine
+)
+
+
+def get_db():
+
+    db = SessionLocal()
+
+    try:
+        yield db
+
+    finally:
+        db.close()
 '''
-
     with open(
         "generated_app/backend/database.py",
         "w"
@@ -269,20 +289,17 @@ sqlalchemy
             backend_requirements.strip()
         )
         
-    # =========================
-    # REQUIREMENTS.TXT
-    # =========================
-
     with open(
-        "generated_app/requirements.txt",
-        "w"
-    ) as f:
+    "generated_app/requirements.txt",
+    "w"
+     ) as f:
 
-        f.write(
-            """fastapi
+       f.write(
+        """fastapi
 uvicorn
+sqlalchemy
 """
-        )
+    )
 
     # =========================
     # README.MD
