@@ -4,6 +4,7 @@ from app.schema_generator.generator import generate_schema
 from app.validator.validator import validate_schema
 from app.validator.validator import validate_schema
 from app.repair_engine.repair import repair_schema
+from app.code_generator.generator import generate_project
 
 user_input = input("Enter App Idea: ")
 
@@ -40,3 +41,8 @@ repaired_schema = repair_schema(
 
 print("\nREPAIRED SCHEMA:\n")
 print(repaired_schema)
+
+project = generate_project(repaired_schema)
+
+print("\nPROJECT GENERATED:\n")
+print(project)
