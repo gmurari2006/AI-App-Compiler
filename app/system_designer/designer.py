@@ -1,46 +1,58 @@
-import os
 import json
-from dotenv import load_dotenv
-import google.generativeai as genai
-
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-model = genai.GenerativeModel("gemini-2.5-flash")
+from app.llm.groq_client import client
 
 
-def design_system(intent_data):
+def design_system(intent):
 
     prompt = f"""
-    You are a software architect.
+    You are a senior software architect.
 
-    Convert the following intent into application architecture.
+    Based on the following intent, generate a system design.
 
     Return ONLY valid JSON.
 
     Format:
 
     {{
-      "pages": [],
-      "entities": [],
-      "roles": []
+        "pages": [],
+        "entities": [],
+        "roles": []
     }}
 
     Intent:
-    {intent_data}
+    {intent}
     """
 
-    response = model.generate_content(prompt)
+    try:
 
-    text = response.text.strip()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0
+        )
 
-    if text.startswith("```json"):
-        text = text.replace("```json", "", 1)
+        text = response.choices[0].message.content.strip()
 
-    if text.endswith("```"):
-        text = text[:-3]
+        text = text.replace("```json", "")
+        text = text.replace("```", "")
+        text = text.strip()
 
-    text = text.strip()
+        print("\nSYSTEM DESIGN:\n")
+        print(text)
 
-    return json.loads(text)
+        return json.loads(text)
+
+    except Exception as e:
+
+        print(f"\nSystem design failed:\n{e}")
+
+        return {
+            "pages": [],
+            "entities": [],
+            "roles": []
+        }

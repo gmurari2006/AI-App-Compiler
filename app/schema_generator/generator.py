@@ -1,13 +1,5 @@
-import os
 import json
-from dotenv import load_dotenv
-import google.generativeai as genai
-
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-model = genai.GenerativeModel("gemini-2.5-flash")
+from app.llm.groq_client import client
 
 
 def generate_schema(system_design):
@@ -37,19 +29,37 @@ def generate_schema(system_design):
     {system_design}
     """
 
-    response = model.generate_content(prompt)
+    try:
 
-    text = response.text.strip()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0
+        )
 
-    if text.startswith("```json"):
-        text = text.replace("```json", "", 1)
+        text = response.choices[0].message.content
 
-    if text.endswith("```"):
-        text = text[:-3]
+        text = text.replace("```json", "")
+        text = text.replace("```", "")
+        text = text.strip()
 
-    text = text.strip()
+        print("\nRAW SCHEMA RESPONSE:\n")
+        print(text)
 
-    print("\nRAW SCHEMA RESPONSE:\n")
-    print(text)
+        return json.loads(text)
 
-    return text
+    except Exception as e:
+
+        print(f"\nSchema generation failed:\n{e}")
+
+        return {
+            "ui_schema": {},
+            "api_schema": {},
+            "db_schema": {},
+            "auth_rules": {}
+        }

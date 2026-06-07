@@ -2,6 +2,8 @@ from app.intent_extractor.extractor import extract_intent
 from app.system_designer.designer import design_system
 from app.schema_generator.generator import generate_schema
 from app.validator.validator import validate_schema
+from app.validator.validator import validate_schema
+from app.repair_engine.repair import repair_schema
 
 user_input = input("Enter App Idea: ")
 
@@ -25,3 +27,16 @@ validation = validate_schema(schema)
 
 print("\nVALIDATION RESULT:\n")
 print(validation)
+
+validation = validate_schema(schema)
+
+print("\nVALIDATION RESULT:\n")
+print(validation)
+
+repaired_schema = repair_schema(
+    schema,
+    validation
+)
+
+print("\nREPAIRED SCHEMA:\n")
+print(repaired_schema)

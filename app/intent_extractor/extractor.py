@@ -1,21 +1,11 @@
-import os
 import json
-from dotenv import load_dotenv
-import google.generativeai as genai
-
-load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-
-model = genai.GenerativeModel("gemini-2.5-flash")
+from app.llm.groq_client import client
 
 
-def extract_intent(user_prompt):
+def extract_intent(user_input):
 
     prompt = f"""
-    Convert the following app request into JSON.
-
-    Return ONLY valid JSON.
+    Analyze the following app idea and return ONLY valid JSON.
 
     Format:
 
@@ -25,20 +15,40 @@ def extract_intent(user_prompt):
       "roles": []
     }}
 
-    User Request:
-    {user_prompt}
+    App Idea:
+    {user_input}
     """
 
-    response = model.generate_content(prompt)
+    try:
 
-    text = response.text.strip()
+        response = client.chat.completions.create(
+            model="llama-3.3-70b-versatile",
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0
+        )
 
-    if text.startswith("```json"):
-        text = text.replace("```json", "", 1)
+        text = response.choices[0].message.content.strip()
 
-    if text.endswith("```"):
-        text = text[:-3]
+        text = text.replace("```json", "")
+        text = text.replace("```", "")
+        text = text.strip()
 
-    text = text.strip()
+        print("\nRAW RESPONSE:\n")
+        print(text)
 
-    return json.loads(text)
+        return json.loads(text)
+
+    except Exception as e:
+
+        print(f"\nIntent extraction failed:\n{e}")
+
+        return {
+            "app_type": "Unknown",
+            "features": [],
+            "roles": []
+        }
