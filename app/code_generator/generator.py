@@ -185,6 +185,9 @@ router = APIRouter()
                 + "_"
                 + path.replace("/", "_")
                       .replace("-", "_")
+                      .replace(":", "")
+                      .replace("{", "")
+                      .replace("}", "")
                       .strip("_")
             )
 
