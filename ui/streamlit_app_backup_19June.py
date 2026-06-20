@@ -671,17 +671,14 @@ def render_pipeline(active: bool) -> None:
         "Project Packaging",
     ]
 
-    cols = st.columns(len(stages))
+    cols = st.columns(6)
 
     for i, stage in enumerate(stages):
         with cols[i]:
             if st.session_state.get("generated"):
                 st.success(f"{i+1}. {stage}")
-            elif active:
-                st.info(f"{i+1}. {stage}")
             else:
-                st.warning(f"{i+1}. {stage}")
-
+                st.info(f"{i+1}. {stage}")
     html = ['<div class="pipeline">']
     for index, label in enumerate(stages, start=1):
         progress = 100 if st.session_state.get("generated") else (66 if active and index == 1 else 0)
@@ -753,21 +750,14 @@ def render_results() -> None:
             read_file(GENERATED_APP_DIR / "backend" / "routes.py"),
         ]
     )
-    frontend_dir = GENERATED_APP_DIR / "frontend"
-    frontend_files = list(frontend_dir.glob("*.jsx"))
-
-    if frontend_files:
-        frontend_code = read_file(frontend_files[0])
-    else:
-        frontend_code = "No frontend files generated."
-    
+    frontend_code = read_file(GENERATED_APP_DIR / "frontend" / "Login.jsx")
     logs = f"""Compiler run complete.
-    Prompt: {st.session_state.get("app_prompt") or "No prompt submitted in this session."}
-    Artifacts: {len(collect_project_files())} files
-    APIs: {count_apis()}
-    Tables: {count_tables()}
-    Pages: {count_pages()}
-    Package: generated_app.zip ready for download"""
+Prompt: {st.session_state.get("app_prompt") or "No prompt submitted in this session."}
+Artifacts: {len(collect_project_files())} files
+APIs: {count_apis()}
+Tables: {count_tables()}
+Pages: {count_pages()}
+Package: generated_app.zip ready for download"""
 
     tabs = st.tabs(["Schema", "Backend", "Frontend", "Project Structure", "Logs"])
     with tabs[0]:
@@ -781,13 +771,6 @@ def render_results() -> None:
     with tabs[4]:
         st.code(logs, language="text")
 
-def get_project_name():
-    prompt = st.session_state.get("app_prompt", "")
-
-    if prompt:
-        return prompt[:50]
-
-    return "No Project Generated"
 
 def render_download_section() -> None:
     left, right = st.columns([1.15, 0.85], gap="large")
@@ -795,8 +778,8 @@ def render_download_section() -> None:
         st.markdown(
             f"""
             <div class="summary-card">
-                <div class="summary-row"><span>Project Name</span><span>{get_project_name()}</span></div>
-                <div class="summary-row"><span>Technologies</span><span>Generated From Compiler Pipeline</span></div>
+                <div class="summary-row"><span>Project Name</span><span>Generated Application</span></div>
+                <div class="summary-row"><span>Technologies</span><span>FastAPI, SQLAlchemy, React</span></div>
                 <div class="summary-row"><span>Number of APIs</span><span>{count_apis()}</span></div>
                 <div class="summary-row"><span>Number of Tables</span><span>{count_tables()}</span></div>
                 <div class="summary-row"><span>Number of Pages</span><span>{count_pages()}</span></div>

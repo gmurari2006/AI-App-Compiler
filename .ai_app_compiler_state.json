@@ -1,0 +1,14 @@
+{
+  "prompt": "Build a Hospital Management System",
+  "project_name": "Hospital Management System",
+  "updated_at": "2026-06-20T09:56:55.592703+00:00",
+  "compiler": {
+    "ran": true,
+    "message": "Compiler completed.",
+    "result": {
+      "status": "success",
+      "folder": "generated_app"
+    }
+  },
+  "validation_errors": []
+}

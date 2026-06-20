@@ -760,7 +760,7 @@ def render_results() -> None:
         frontend_code = read_file(frontend_files[0])
     else:
         frontend_code = "No frontend files generated."
-    
+
     logs = f"""Compiler run complete.
     Prompt: {st.session_state.get("app_prompt") or "No prompt submitted in this session."}
     Artifacts: {len(collect_project_files())} files

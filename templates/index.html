@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ app_title }}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="/" aria-label="AI App Compiler home">
+          <span class="brand-mark">AI</span>
+          <span>
+            <strong>AI App Compiler</strong>
+            <small>Full-stack application generation</small>
+          </span>
+        </a>
+        <div class="topbar-status">
+          <span class="pulse"></span>
+          <span id="compilerStatus">Checking project status</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <span class="eyebrow">AI Engineering Platform</span>
+            <h1>AI App Compiler</h1>
+            <p>Transform a product prompt into generated backend, frontend, schema, validation output, and a downloadable project package.</p>
+          </div>
+        </section>
+
+        <section class="prompt-panel" aria-labelledby="promptTitle">
+          <div class="section-heading compact">
+            <div>
+              <h2 id="promptTitle">Generate Application</h2>
+              <p>Enter the product request to run the compiler pipeline.</p>
+            </div>
+          </div>
+          <form id="generateForm" class="prompt-form">
+            <textarea id="promptInput" name="prompt" rows="8" aria-label="Application prompt" required></textarea>
+            <div class="form-actions">
+              <button id="generateButton" class="primary-button" type="submit">
+                <span>Generate</span>
+                <span class="button-glow"></span>
+              </button>
+            </div>
+          </form>
+          <p id="formMessage" class="form-message" role="status"></p>
+        </section>
+
+        <section aria-labelledby="pipelineTitle">
+          <div class="section-heading">
+            <div>
+              <h2 id="pipelineTitle">Pipeline</h2>
+              <p>Live compiler stage state from the latest generated project.</p>
+            </div>
+            <span id="projectName" class="project-chip"></span>
+          </div>
+          <div id="pipelineGrid" class="pipeline-grid"></div>
+        </section>
+
+        <section aria-labelledby="metricsTitle">
+          <div class="section-heading">
+            <div>
+              <h2 id="metricsTitle">Metrics</h2>
+              <p>Calculated dynamically from generated_app.</p>
+            </div>
+          </div>
+          <div class="metrics-grid">
+            <article class="metric-card">
+              <span>APIs</span>
+              <strong id="apiCount">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>Tables</span>
+              <strong id="tableCount">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>Pages</span>
+              <strong id="pageCount">0</strong>
+            </article>
+            <article class="metric-card">
+              <span>Files</span>
+              <strong id="fileCount">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="results-section" aria-labelledby="resultsTitle">
+          <div class="section-heading">
+            <div>
+              <h2 id="resultsTitle">Results</h2>
+              <p>Actual generated artifacts discovered from generated_app.</p>
+            </div>
+            <a id="downloadButton" class="download-button disabled" href="/download" aria-disabled="true">Download ZIP</a>
+          </div>
+
+          <div id="emptyState" class="empty-state hidden">
+            <h3>No project generated yet</h3>
+            <p>Generate an application to view results</p>
+          </div>
+
+          <div id="resultsPanel" class="results-panel hidden">
+            <div class="tabs" role="tablist" aria-label="Generated results">
+              <button class="tab active" type="button" data-tab="schema" role="tab" aria-selected="true">Schema</button>
+              <button class="tab" type="button" data-tab="backend" role="tab" aria-selected="false">Backend</button>
+              <button class="tab" type="button" data-tab="frontend" role="tab" aria-selected="false">Frontend</button>
+              <button class="tab" type="button" data-tab="structure" role="tab" aria-selected="false">Project Structure</button>
+              <button class="tab" type="button" data-tab="logs" role="tab" aria-selected="false">Logs</button>
+              <button class="tab" data-tab="logs">Logs</button>
+            </div>
+            <div id="tabContent" class="tab-content"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/static/js/app.js" defer></script>
+  </body>
+</html>
